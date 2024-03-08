@@ -1,0 +1,128 @@
+﻿@model WebDevTest.Models.BookReport
+@*@model WebDevTest.Models.DataPager.PaginatedList<BookResults>
+*@
+@{
+
+
+    var prevDisabled = !Model.bookResults.HasPreviosPage ? "disabled" : "";
+    var nextDisabled = !Model.bookResults.HasNextPage ? "disabled" : "";
+    
+}
+
+
+<div class="row g-3">
+    <div class="col-2">
+        <label class="col-md-6 col-form-label" style="text-align: right;font-size: 14px;">ชื่อผู้แต่ง</label>   
+
+    </div>
+    <div class="col-auto">
+
+        <form id="searchForm" method="post" asp-controller="Book" asp-action="Select">
+
+            <select name="q" id="selectedAuthors" class="form-control">
+                @if (Model.GetAuthors != null)
+                {
+                    <option value="all">ทั้งหมด</option>
+
+                    var oldid = ViewData["ID"]?.ToString();
+                 
+                    @foreach (var item in Model.GetAuthors)
+                    {
+
+                        @* <option value= @item.FirstName  />*@
+                        var s = string.Concat(@item.FirstName, " ", @item.LastName);
+                        var currentid = @item.AuthorId;
+                       
+                        if(oldid == currentid)
+                        {
+                            <option value="@item.AuthorId" selected>@s</option>
+
+                        }
+                        else{
+                            <option value="@item.AuthorId">@s</option>
+                        }
+
+                       
+
+
+
+                    }
+                }
+                
+
+            </select>
+            </form>
+
+     
+        
+        
+    </div>
+
+    <form>
+    <div class="container">
+
+        <table class="table table-responsive">
+            <thead class="bg-dark text-white">
+                <tr>
+
+                    <th>ชื่อหนังสือ</th>
+                    <th>ชื่อผู้แต่ง</th>
+                    <th>จำนวนผู้แต่ง</th>
+                </tr>
+            </thead>
+
+            <tbody>
+                @if (Model.bookResults != null){
+                    @foreach (var item in Model.bookResults)
+                    {
+                        <tr>
+
+                            <td>@item.Title</td>
+                            <td>@item.AuthorName</td>
+                            <td>@item.AuthorCount</td>
+                        </tr>
+                    }
+                }                
+            </tbody>
+
+        </table>
+
+    </div>
+
+    <div class="container">
+        <div class="row g-3">
+            <div class="col-2" style="text-align: left">
+                <label class="col-auto"> Total Rows: @(Model.bookResults.TotalRows.ToString()) </label>
+            </div>
+           <div class="col-8" style="text-align: right">
+                <from asp-controller="Book" >
+                    <a asp-action="Paging" asp-route-pageNumber="@(Model.bookResults.PageIndex-1)" asp-route-ID="@(ViewData["ID"]?.ToString())" class="btn btn-default @prevDisabled">
+                        Previous
+                    </a>
+                        <a asp-action="Paging" asp-route-pageNumber="@(Model.bookResults.PageIndex+1)" asp-route-ID="@(ViewData["ID"]?.ToString())" class="btn btn-default @nextDisabled">
+                        Next
+                    </a>
+               </from>
+            
+             
+           </div>
+           
+        </div>
+     
+
+      
+
+    </div>
+    
+    </form>
+    
+
+    <script src=https://code.jquery.com/jquery-3.6.0.min.js></script>
+    <script>
+        $('#selectedAuthors').change(function () {
+            $('#searchForm').submit();
+        });
+    </script>
+
+    
+</div>
